@@ -17,19 +17,6 @@ interface FigureItemProps {
   isOpen: boolean;
 }
 
-// Iconos SVG de respaldo en caso de que lucide-react no cargue
-const RectangleIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="5" width="18" height="14" rx="2" />
-  </svg>
-);
-
-const SquareIcon = () => (
-  <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <rect x="3" y="3" width="18" height="18" rx="2" />
-  </svg>
-);
-
 function FigureItem({ figure, draggedType, onDragStart, onDragEnd, isOpen }: FigureItemProps) {
   const { showTooltip, tooltipProps } = useTooltip({ delay: 3000 });
 
@@ -83,23 +70,13 @@ export default function LeftPanel({ isOpen, onToggle }: LeftPanelProps) {
       type: 'rectangle',
       label: 'Rectángulo',
       description: 'Arrastra para crear un rectángulo en el canvas',
-      icon: (
-        <>
-          <RectangleHorizontal size={32} strokeWidth={2} className="lucide-icon" />
-          <RectangleIcon />
-        </>
-      )
+      icon: <RectangleHorizontal size={32} strokeWidth={2} />
     },
     {
       type: 'square',
       label: 'Cuadrado',
       description: 'Arrastra para crear un cuadrado en el canvas',
-      icon: (
-        <>
-          <Square size={32} strokeWidth={2} className="lucide-icon" />
-          <SquareIcon />
-        </>
-      )
+      icon: <Square size={32} strokeWidth={2} />
     }
   ];
 

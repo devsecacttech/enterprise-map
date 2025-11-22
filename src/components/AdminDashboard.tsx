@@ -181,7 +181,7 @@ export default function AdminDashboard({ onExport, onImport }: AdminDashboardPro
           onToggle={() => setLeftPanelOpen(!leftPanelOpen)}
         />
 
-        <div style={{ position: 'relative', flex: 1 }}>
+        <div style={{ position: 'relative', flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, minWidth: 0 }}>
           <InfiniteCanvas
             state={canvasState.state}
             selection={canvasState.selection}
