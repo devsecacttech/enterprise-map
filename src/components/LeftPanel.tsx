@@ -1,10 +1,55 @@
 import { useState } from 'react';
+import { Square, RectangleHorizontal } from 'lucide-react';
 import { FigureType } from '../types';
+import { useTooltip } from '../hooks/useTooltip';
 import './LeftPanel.css';
 
 interface LeftPanelProps {
   isOpen: boolean;
   onToggle: () => void;
+}
+
+interface FigureItemProps {
+  figure: { type: FigureType; label: string; description: string; icon: JSX.Element };
+  draggedType: FigureType | null;
+  onDragStart: (type: FigureType) => (e: React.DragEvent) => void;
+  onDragEnd: () => void;
+  isOpen: boolean;
+}
+
+function FigureItem({ figure, draggedType, onDragStart, onDragEnd, isOpen }: FigureItemProps) {
+  const { showTooltip, tooltipProps } = useTooltip({ delay: 3000 });
+
+  return (
+    <div className="figure-item-wrapper">
+      <div
+        className={`figure-item ${draggedType === figure.type ? 'dragging' : ''}`}
+        draggable
+        onDragStart={onDragStart(figure.type)}
+        onDragEnd={onDragEnd}
+        role="button"
+        tabIndex={0}
+        aria-label={`Arrastrar ${figure.label}`}
+        {...tooltipProps}
+        onKeyDown={(e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+          }
+        }}
+      >
+        <div className="figure-icon">
+          {figure.icon}
+        </div>
+        {isOpen && <div className="figure-label">{figure.label}</div>}
+      </div>
+      {showTooltip && !isOpen && (
+        <div className="figure-tooltip">
+          <div className="tooltip-title">{figure.label}</div>
+          <div className="tooltip-description">{figure.description}</div>
+        </div>
+      )}
+    </div>
+  );
 }
 
 export default function LeftPanel({ isOpen, onToggle }: LeftPanelProps) {
@@ -20,24 +65,18 @@ export default function LeftPanel({ isOpen, onToggle }: LeftPanelProps) {
     setDraggedType(null);
   };
 
-  const figures: Array<{ type: FigureType; label: string; icon: JSX.Element }> = [
+  const figures: Array<{ type: FigureType; label: string; description: string; icon: JSX.Element }> = [
     {
       type: 'rectangle',
       label: 'Rectángulo',
-      icon: (
-        <svg width="40" height="30" viewBox="0 0 40 30">
-          <rect x="5" y="5" width="30" height="20" fill="none" stroke="currentColor" strokeWidth="2" />
-        </svg>
-      )
+      description: 'Arrastra para crear un rectángulo en el canvas',
+      icon: <RectangleHorizontal size={32} strokeWidth={2} />
     },
     {
       type: 'square',
       label: 'Cuadrado',
-      icon: (
-        <svg width="40" height="40" viewBox="0 0 40 40">
-          <rect x="5" y="5" width="30" height="30" fill="none" stroke="currentColor" strokeWidth="2" />
-        </svg>
-      )
+      description: 'Arrastra para crear un cuadrado en el canvas',
+      icon: <Square size={32} strokeWidth={2} />
     }
   ];
 
@@ -66,29 +105,7 @@ export default function LeftPanel({ isOpen, onToggle }: LeftPanelProps) {
       )}
 
       <div className="panel-content">
-        {figures.map(figure => (
-          <div
-            key={figure.type}
-            className={`figure-item ${draggedType === figure.type ? 'dragging' : ''}`}
-            draggable
-            onDragStart={handleDragStart(figure.type)}
-            onDragEnd={handleDragEnd}
-            role="button"
-            tabIndex={0}
-            aria-label={`Arrastrar ${figure.label}`}
-            title={isOpen ? figure.label : undefined}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-              }
-            }}
-          >
-            <div className="figure-icon">
-              {figure.icon}
-            </div>
-            {isOpen && <div className="figure-label">{figure.label}</div>}
-          </div>
-        ))}
+        {figures.map(figure => <FigureItem key={figure.type} figure={figure} draggedType={draggedType} onDragStart={handleDragStart} onDragEnd={handleDragEnd} isOpen={isOpen} />)}
       </div>
     </div>
   );

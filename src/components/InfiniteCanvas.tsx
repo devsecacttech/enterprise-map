@@ -51,7 +51,10 @@ export default function InfiniteCanvas({
     end: Point;
     sourceEndpoint: ConnectionEndpoint;
   } | null>(null);
+  const [nearbyAnchor, setNearbyAnchor] = useState<{ figureId: string; anchorId: string; position: Point } | null>(null);
   const [spacePressed, setSpacePressed] = useState(false);
+
+  const SNAP_DISTANCE = 20; // Distancia en pixels para snap-to-anchor
 
   const screenToCanvas = useCallback((screenX: number, screenY: number): Point => {
     if (!svgRef.current) return { x: screenX, y: screenY };
@@ -137,7 +140,41 @@ export default function InfiniteCanvas({
       setDragStart(canvasPos);
     } else if (dragMode === 'connection-start' && tempConnection) {
       const canvasPos = screenToCanvas(e.clientX, e.clientY);
-      setTempConnection({ ...tempConnection, end: canvasPos });
+
+      // Buscar anchor cercano para snap
+      let closestAnchor: { figureId: string; anchorId: string; position: Point; distance: number } | null = null;
+
+      for (const figure of state.figures) {
+        // No permitir conectar al mismo figura de origen
+        if (figure.id === tempConnection.sourceEndpoint.figureId) continue;
+
+        for (const anchor of figure.anchors) {
+          const dist = Math.sqrt(
+            Math.pow(anchor.x - canvasPos.x, 2) + Math.pow(anchor.y - canvasPos.y, 2)
+          );
+
+          if (dist < SNAP_DISTANCE && (!closestAnchor || dist < closestAnchor.distance)) {
+            closestAnchor = {
+              figureId: figure.id,
+              anchorId: anchor.id,
+              position: { x: anchor.x, y: anchor.y },
+              distance: dist
+            };
+          }
+        }
+      }
+
+      if (closestAnchor) {
+        setNearbyAnchor({
+          figureId: closestAnchor.figureId,
+          anchorId: closestAnchor.anchorId,
+          position: closestAnchor.position
+        });
+        setTempConnection({ ...tempConnection, end: closestAnchor.position });
+      } else {
+        setNearbyAnchor(null);
+        setTempConnection({ ...tempConnection, end: canvasPos });
+      }
     } else if (dragMode === 'connection-point' && dragConnectionId !== null) {
       const connection = state.connections.find(c => c.id === dragConnectionId);
       if (!connection) return;
@@ -168,27 +205,23 @@ export default function InfiniteCanvas({
     if (dragMode === 'connection-start' && tempConnection) {
       const canvasPos = screenToCanvas(e.clientX, e.clientY);
 
+      // Usar el anchor cercano si existe
       let targetEndpoint: ConnectionEndpoint | null = null;
+      let finalEndPoint = tempConnection.end;
 
-      for (const figure of state.figures) {
-        for (const anchor of figure.anchors) {
-          const dist = Math.sqrt(
-            Math.pow(anchor.x - canvasPos.x, 2) + Math.pow(anchor.y - canvasPos.y, 2)
-          );
-
-          if (dist < 10) {
-            targetEndpoint = { figureId: figure.id, anchorId: anchor.id };
-            break;
-          }
-        }
-        if (targetEndpoint) break;
+      if (nearbyAnchor) {
+        targetEndpoint = {
+          figureId: nearbyAnchor.figureId,
+          anchorId: nearbyAnchor.anchorId
+        };
+        finalEndPoint = nearbyAnchor.position;
       }
 
       const connection: Connection = {
         id: `conn-${Date.now()}-${Math.random()}`,
         source: tempConnection.sourceEndpoint,
         target: targetEndpoint,
-        points: [tempConnection.start, targetEndpoint ? canvasPos : tempConnection.end],
+        points: [tempConnection.start, finalEndPoint],
         style: {
           type: 'orthogonal',
           arrowHead: true,
@@ -200,13 +233,14 @@ export default function InfiniteCanvas({
 
       onAddConnection(connection);
       setTempConnection(null);
+      setNearbyAnchor(null);
     }
 
     setDragMode(null);
     setDragFigureId(null);
     setDragConnectionId(null);
     setDragConnectionPointIndex(-1);
-  }, [dragMode, tempConnection, state.figures, screenToCanvas, onAddConnection]);
+  }, [dragMode, tempConnection, nearbyAnchor, screenToCanvas, onAddConnection]);
 
   const handleDrop = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -454,16 +488,53 @@ export default function InfiniteCanvas({
           ))}
 
           {tempConnection && (
-            <line
-              x1={tempConnection.start.x}
-              y1={tempConnection.start.y}
-              x2={tempConnection.end.x}
-              y2={tempConnection.end.y}
-              stroke="#007acc"
-              strokeWidth={2}
-              strokeDasharray="5,5"
-              opacity={0.6}
-            />
+            <>
+              <line
+                x1={tempConnection.start.x}
+                y1={tempConnection.start.y}
+                x2={tempConnection.end.x}
+                y2={tempConnection.end.y}
+                stroke="#007acc"
+                strokeWidth={2}
+                strokeDasharray="5,5"
+                opacity={0.6}
+              />
+              {nearbyAnchor && (
+                <g className="nearby-anchor-highlight">
+                  <circle
+                    cx={nearbyAnchor.position.x}
+                    cy={nearbyAnchor.position.y}
+                    r={10}
+                    fill="none"
+                    stroke="#4ade80"
+                    strokeWidth={3}
+                    opacity={0.8}
+                  >
+                    <animate
+                      attributeName="r"
+                      from="8"
+                      to="12"
+                      dur="0.8s"
+                      repeatCount="indefinite"
+                    />
+                    <animate
+                      attributeName="opacity"
+                      from="1"
+                      to="0.4"
+                      dur="0.8s"
+                      repeatCount="indefinite"
+                    />
+                  </circle>
+                  <circle
+                    cx={nearbyAnchor.position.x}
+                    cy={nearbyAnchor.position.y}
+                    r={6}
+                    fill="#4ade80"
+                    opacity={0.6}
+                  />
+                </g>
+              )}
+            </>
           )}
         </g>
       </svg>
