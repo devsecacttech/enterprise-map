@@ -3,6 +3,8 @@
   position: relative;
   overflow: hidden;
   background-color: #1e1e1e;
+  min-height: 0;
+  min-width: 0;
 }
 
 .infinite-canvas {

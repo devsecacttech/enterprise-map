@@ -1,4 +1,4 @@
-import { Connection, Point } from '../types';
+import { Connection } from '../types';
 import { generateOrthogonalPath, generateCurvedPath, generateStraightPath } from '../utils/geometry';
 import './ConnectionComponent.css';
 

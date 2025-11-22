@@ -8,7 +8,7 @@ import {
   Point,
   ConnectionEndpoint
 } from '../types';
-import { snapToGrid, isPointInRect } from '../utils/geometry';
+import { snapToGrid } from '../utils/geometry';
 import FigureComponent from './Figure';
 import ConnectionComponent from './ConnectionComponent';
 import './InfiniteCanvas.css';
@@ -99,7 +99,7 @@ export default function InfiniteCanvas({
       return;
     }
 
-    if (spacePressed || e.button === 1) {
+    if (spacePressed) {
       setDragMode('pan');
       setDragStart({ x: e.clientX, y: e.clientY });
       e.preventDefault();
@@ -201,10 +201,8 @@ export default function InfiniteCanvas({
     onUpdateSettings
   ]);
 
-  const handleMouseUp = useCallback((e: React.MouseEvent) => {
+  const handleMouseUp = useCallback((_e: React.MouseEvent) => {
     if (dragMode === 'connection-start' && tempConnection) {
-      const canvasPos = screenToCanvas(e.clientX, e.clientY);
-
       // Usar el anchor cercano si existe
       let targetEndpoint: ConnectionEndpoint | null = null;
       let finalEndPoint = tempConnection.end;

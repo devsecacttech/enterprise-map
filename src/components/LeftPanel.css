@@ -90,6 +90,22 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
+}
+
+/* Ocultar icono de lucide si no carga, mostrar SVG de respaldo */
+.figure-icon .lucide-icon {
+  position: absolute;
+}
+
+.figure-icon svg:not(.lucide-icon) {
+  display: none;
+}
+
+/* Si lucide-icon no existe o no se renderiza, mostrar el SVG de respaldo */
+.figure-icon:not(:has(.lucide-icon)) svg,
+.figure-icon .lucide-icon:empty + svg {
+  display: block;
 }
 
 .figure-label {

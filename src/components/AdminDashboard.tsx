@@ -21,7 +21,7 @@ export default function AdminDashboard({ onExport, onImport }: AdminDashboardPro
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
   const [contextMenu, setContextMenu] = useState<{ position: Point; items: ContextMenuItem[] } | null>(null);
-  const [showMinimap, setShowMinimap] = useState(true);
+  const [showMinimap] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const canvasState = useCanvasState();

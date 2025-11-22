@@ -16,19 +16,19 @@ interface UseTooltipReturn {
 export function useTooltip({ delay = 3000 }: UseTooltipProps = {}): UseTooltipReturn {
   const [showTooltip, setShowTooltip] = useState(false);
   const [isHovering, setIsHovering] = useState(false);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<number | null>(null);
   const lastMoveRef = useRef<number>(Date.now());
 
   useEffect(() => {
     if (isHovering) {
       // Iniciar timeout para mostrar tooltip
-      timeoutRef.current = setTimeout(() => {
+      timeoutRef.current = window.setTimeout(() => {
         setShowTooltip(true);
       }, delay);
     } else {
       // Limpiar timeout y ocultar tooltip
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+        window.clearTimeout(timeoutRef.current);
         timeoutRef.current = null;
       }
       setShowTooltip(false);
@@ -36,7 +36,7 @@ export function useTooltip({ delay = 3000 }: UseTooltipProps = {}): UseTooltipRe
 
     return () => {
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+        window.clearTimeout(timeoutRef.current);
       }
     };
   }, [isHovering, delay]);
@@ -59,9 +59,9 @@ export function useTooltip({ delay = 3000 }: UseTooltipProps = {}): UseTooltipRe
     if (timeSinceLastMove < 100) {
       setShowTooltip(false);
       if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+        window.clearTimeout(timeoutRef.current);
       }
-      timeoutRef.current = setTimeout(() => {
+      timeoutRef.current = window.setTimeout(() => {
         setShowTooltip(true);
       }, delay);
     }
