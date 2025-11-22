@@ -80,6 +80,33 @@ Panel de administración con canvas infinito e interactivo para crear diagramas,
 - Selección múltiple con indicador visual
 - Contador de elementos seleccionados
 
+### ✨ Mejoras UX (v1.2.0)
+
+#### Snap-to-Anchor Inteligente
+- **Detección automática**: Las conexiones se ajustan automáticamente a anchors cercanos (radio de 20px)
+- **Feedback visual**: Highlight verde pulsante cuando te acercas a un anchor
+- **Animación suave**: El highlight crece y pulsa para guiar al usuario
+- **Precisión mejorada**: No necesitas hacer clic exactamente en el anchor
+
+#### Tooltips Contextuales
+- **Delay inteligente**: Aparecen después de 3 segundos de hover
+- **Reseteo por movimiento**: Se ocultan automáticamente si mueves el mouse
+- **Información clara**: Nombre y descripción de cada elemento
+- **Animación elegante**: Fade-in desde la izquierda
+
+#### Iconos Profesionales
+- **Librería lucide-react**: Iconos SVG modernos y escalables
+- **Totalmente personalizables**: Tamaño, color y stroke configurables
+- **Alta calidad**: Diseño consistente y profesional
+- **Iconos actuales**:
+  - 📐 **RectangleHorizontal**: Para crear rectángulos
+  - ⬜ **Square**: Para crear cuadrados
+
+#### Canvas Optimizado
+- **Altura completa**: El canvas ocupa todo el espacio vertical disponible
+- **Layout flex mejorado**: Sin overflow ni problemas de scroll
+- **Responsive**: Se adapta perfectamente a diferentes tamaños de pantalla
+
 ### Persistencia
 - **Undo/Redo**: Hasta 20 pasos
 - **Export/Import**: JSON completo del estado

@@ -1,6 +1,6 @@
 {
   "name": "enterprise-map-admin-canvas",
-  "version": "1.0.0",
+  "version": "1.2.0",
   "description": "Admin dashboard with infinite interactive canvas",
   "type": "module",
   "scripts": {

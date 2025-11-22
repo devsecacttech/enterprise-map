@@ -2,6 +2,63 @@
 
 Todos los cambios notables de este proyecto serán documentados en este archivo.
 
+## [1.2.0] - 2025-11-22
+
+### ✨ Añadido
+
+- **Snap-to-Anchor Inteligente**: Sistema de ajuste automático de conexiones
+  - Detección automática de anchors cercanos (radio de 20px)
+  - Feedback visual con highlight verde pulsante
+  - Animación suave que crece y pulsa para guiar al usuario
+  - Mejora significativa en la precisión de conexión
+
+- **Tooltips Contextuales**: Información al hacer hover
+  - Delay inteligente de 3 segundos antes de mostrar
+  - Se ocultan automáticamente al mover el mouse
+  - Muestran nombre y descripción de cada elemento
+  - Animación elegante con fade-in desde la izquierda
+  - Implementado con hook personalizado `useTooltip`
+
+- **Iconos Profesionales con lucide-react**:
+  - Integración de librería moderna de iconos SVG
+  - `RectangleHorizontal`: Icono para crear rectángulos
+  - `Square`: Icono para crear cuadrados
+  - Totalmente personalizables (tamaño, color, stroke)
+  - Alta calidad con diseño consistente
+
+### 🐛 Corregido
+
+- **Canvas con altura completa**: Solucionado problema de canvas "partido"
+  - Agregado `display: flex` y `flexDirection: column` al contenedor
+  - Implementado `minHeight: 0` y `minWidth: 0` para prevenir overflow
+  - Canvas ahora ocupa correctamente todo el espacio vertical
+
+- **Visibilidad de iconos**: Sistema de iconos simplificado
+  - Eliminado CSS complejo con `:has()` que causaba problemas
+  - Iconos ahora se muestran correctamente en todos los navegadores
+  - Mejor compatibilidad cross-browser
+
+- **Errores TypeScript**: Compilación sin errores
+  - Corregido error `NodeJS.Timeout` en useTooltip
+  - Cambiado a `number` type para window.setTimeout
+  - Eliminadas importaciones no utilizadas
+  - Build limpio sin warnings
+
+### 🔧 Mejorado
+
+- Layout flex optimizado para mejor responsividad
+- CSS limpiado y simplificado
+- Hot Module Replacement (HMR) funcionando correctamente
+- Documentación actualizada con v1.2.0
+
+### 📚 Documentación
+
+- README actualizado con características v1.2.0
+- Sección de Snap-to-Anchor documentada
+- Sección de Tooltips documentada
+- Sección de Iconos documentada
+- CHANGELOG con todas las versiones
+
 ## [1.1.0] - 2025-11-22
 
 ### Añadido
