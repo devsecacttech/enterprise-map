@@ -1,10 +1,15 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useRef } from 'react';
 import TopBar from './TopBar';
 import LeftPanel from './LeftPanel';
 import RightPanel from './RightPanel';
 import InfiniteCanvas from './InfiniteCanvas';
+import Minimap from './Minimap';
+import AlignmentToolbar from './AlignmentToolbar';
+import ContextMenu, { ContextMenuItem } from './ContextMenu';
 import { useCanvasState } from '../hooks/useCanvasState';
-import { Figure } from '../types';
+import { useClipboard, useKeyboardShortcuts } from '../hooks/useCanvasInteractions';
+import { Figure, Point } from '../types';
+import { alignFigures, distributeFigures, duplicateFigure } from '../utils/export';
 import './AdminDashboard.css';
 
 export interface AdminDashboardProps {
@@ -15,6 +20,9 @@ export interface AdminDashboardProps {
 export default function AdminDashboard({ onExport, onImport }: AdminDashboardProps) {
   const [leftPanelOpen, setLeftPanelOpen] = useState(true);
   const [rightPanelOpen, setRightPanelOpen] = useState(true);
+  const [contextMenu, setContextMenu] = useState<{ position: Point; items: ContextMenuItem[] } | null>(null);
+  const [showMinimap, setShowMinimap] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const canvasState = useCanvasState();
 
@@ -60,8 +68,95 @@ export default function AdminDashboard({ onExport, onImport }: AdminDashboardPro
     }
   }, [selectedFigure, canvasState]);
 
+  // Clipboard functionality
+  const clipboard = useClipboard({
+    onCopy: (data) => {
+      console.log('Copied:', data);
+    },
+    onPaste: (data) => {
+      if (data && Array.isArray(data)) {
+        data.forEach((fig: Figure) => {
+          const duplicated = duplicateFigure(fig);
+          canvasState.addFigure(duplicated);
+        });
+      }
+    }
+  });
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts({
+    onCopy: () => {
+      if (canvasState.selection.type === 'figure') {
+        const figures = canvasState.state.figures.filter(f =>
+          canvasState.selection.ids.includes(f.id)
+        );
+        clipboard.copy(figures);
+      }
+    },
+    onPaste: () => {
+      clipboard.paste();
+    },
+    onCut: () => {
+      if (canvasState.selection.type === 'figure') {
+        const figures = canvasState.state.figures.filter(f =>
+          canvasState.selection.ids.includes(f.id)
+        );
+        clipboard.cut(figures);
+        canvasState.selection.ids.forEach(id => canvasState.deleteFigure(id));
+      }
+    },
+    onSelectAll: () => {
+      canvasState.setSelection({
+        type: 'figure',
+        ids: canvasState.state.figures.map(f => f.id)
+      });
+    },
+    onDelete: () => {
+      if (canvasState.selection.type === 'figure') {
+        canvasState.selection.ids.forEach(id => canvasState.deleteFigure(id));
+      } else if (canvasState.selection.type === 'connection') {
+        canvasState.selection.ids.forEach(id => canvasState.deleteConnection(id));
+      }
+    },
+    onUndo: canvasState.undo,
+    onRedo: canvasState.redo,
+    onEscape: () => {
+      canvasState.setSelection({ type: null, ids: [] });
+      setContextMenu(null);
+    }
+  });
+
+  // Alignment functions
+  const handleAlign = useCallback((alignment: 'left' | 'right' | 'top' | 'bottom' | 'center-horizontal' | 'center-vertical') => {
+    if (canvasState.selection.type !== 'figure' || canvasState.selection.ids.length < 2) return;
+
+    const selectedFigures = canvasState.state.figures.filter(f =>
+      canvasState.selection.ids.includes(f.id)
+    );
+
+    const alignedFigures = alignFigures(selectedFigures, alignment);
+
+    alignedFigures.forEach(fig => {
+      canvasState.updateFigure(fig.id, { x: fig.x, y: fig.y });
+    });
+  }, [canvasState]);
+
+  const handleDistribute = useCallback((direction: 'horizontal' | 'vertical') => {
+    if (canvasState.selection.type !== 'figure' || canvasState.selection.ids.length < 3) return;
+
+    const selectedFigures = canvasState.state.figures.filter(f =>
+      canvasState.selection.ids.includes(f.id)
+    );
+
+    const distributedFigures = distributeFigures(selectedFigures, direction);
+
+    distributedFigures.forEach(fig => {
+      canvasState.updateFigure(fig.id, { x: fig.x, y: fig.y });
+    });
+  }, [canvasState]);
+
   return (
-    <div className="admin-dashboard">
+    <div className="admin-dashboard" ref={containerRef}>
       <TopBar
         onUndo={canvasState.undo}
         onRedo={canvasState.redo}
@@ -86,18 +181,46 @@ export default function AdminDashboard({ onExport, onImport }: AdminDashboardPro
           onToggle={() => setLeftPanelOpen(!leftPanelOpen)}
         />
 
-        <InfiniteCanvas
-          state={canvasState.state}
-          selection={canvasState.selection}
-          onAddFigure={canvasState.addFigure}
-          onUpdateFigure={canvasState.updateFigure}
-          onDeleteFigure={canvasState.deleteFigure}
-          onAddConnection={canvasState.addConnection}
-          onUpdateConnection={canvasState.updateConnection}
-          onDeleteConnection={canvasState.deleteConnection}
-          onSetSelection={canvasState.setSelection}
-          onUpdateSettings={canvasState.updateSettings}
-        />
+        <div style={{ position: 'relative', flex: 1 }}>
+          <InfiniteCanvas
+            state={canvasState.state}
+            selection={canvasState.selection}
+            onAddFigure={canvasState.addFigure}
+            onUpdateFigure={canvasState.updateFigure}
+            onDeleteFigure={canvasState.deleteFigure}
+            onAddConnection={canvasState.addConnection}
+            onUpdateConnection={canvasState.updateConnection}
+            onDeleteConnection={canvasState.deleteConnection}
+            onSetSelection={canvasState.setSelection}
+            onUpdateSettings={canvasState.updateSettings}
+          />
+
+          {canvasState.selection.type === 'figure' && canvasState.selection.ids.length >= 2 && (
+            <AlignmentToolbar
+              onAlign={handleAlign}
+              onDistribute={handleDistribute}
+            />
+          )}
+
+          {showMinimap && containerRef.current && (
+            <Minimap
+              state={canvasState.state}
+              viewportWidth={containerRef.current.clientWidth}
+              viewportHeight={containerRef.current.clientHeight}
+              onViewportChange={(panX, panY) => {
+                canvasState.updateSettings({ panX, panY });
+              }}
+            />
+          )}
+
+          {contextMenu && (
+            <ContextMenu
+              position={contextMenu.position}
+              items={contextMenu.items}
+              onClose={() => setContextMenu(null)}
+            />
+          )}
+        </div>
 
         <RightPanel
           isOpen={rightPanelOpen}

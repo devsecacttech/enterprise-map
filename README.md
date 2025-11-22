@@ -47,7 +47,38 @@ Panel de administración con canvas infinito e interactivo para crear diagramas,
   - `Esc`: Deseleccionar
   - `Ctrl/Cmd+Z`: Deshacer
   - `Ctrl/Cmd+Y`: Rehacer
+  - `Ctrl/Cmd+C`: Copiar selección
+  - `Ctrl/Cmd+V`: Pegar
+  - `Ctrl/Cmd+X`: Cortar
+  - `Ctrl/Cmd+A`: Seleccionar todo
   - `Espacio`: Modo pan temporal
+
+### 🆕 Características Avanzadas (v1.1.0)
+
+#### Minimap
+- **Vista miniatura** del canvas completo en la esquina inferior derecha
+- Muestra todas las figuras y conexiones en tiempo real
+- **Viewport visual** resaltado en azul
+- **Click y arrastre** para navegación rápida por el canvas
+- Actualización automática con el contenido
+
+#### Toolbar de Alineación
+- Aparece automáticamente cuando seleccionas **2 o más figuras**
+- **Alineación**: Izquierda, derecha, arriba, abajo, centro horizontal, centro vertical
+- **Distribución**: Espaciado uniforme horizontal o vertical (requiere 3+ figuras)
+- Posicionado en la parte superior central para fácil acceso
+- Iconos visuales intuitivos para cada operación
+
+#### Clipboard y Duplicación
+- **Copiar** (`Ctrl/Cmd+C`): Copia figuras seleccionadas
+- **Pegar** (`Ctrl/Cmd+V`): Pega con offset automático
+- **Cortar** (`Ctrl/Cmd+X`): Corta y elimina del canvas
+- Las figuras duplicadas mantienen todas las propiedades excepto ID
+
+#### Selección Mejorada
+- **Seleccionar todo** (`Ctrl/Cmd+A`): Selecciona todas las figuras
+- Selección múltiple con indicador visual
+- Contador de elementos seleccionados
 
 ### Persistencia
 - **Undo/Redo**: Hasta 20 pasos
