@@ -1,0 +1,58 @@
+.figure {
+  cursor: move;
+  transition: opacity 0.15s ease;
+}
+
+.figure:hover .figure-body {
+  stroke-width: 3;
+}
+
+.figure.selected .figure-body {
+  stroke-width: 3;
+}
+
+.figure-body {
+  transition: stroke-width 0.15s ease;
+}
+
+.figure-label {
+  user-select: none;
+  pointer-events: none;
+}
+
+.selection-box {
+  animation: dash 20s linear infinite;
+}
+
+@keyframes dash {
+  to {
+    stroke-dashoffset: -100;
+  }
+}
+
+.resize-handle {
+  cursor: nwse-resize;
+  transition: fill 0.15s ease;
+}
+
+.resize-handle:hover {
+  fill: #ffffff;
+}
+
+.anchor {
+  cursor: crosshair;
+  transition: opacity 0.15s ease;
+}
+
+.anchor:hover .anchor-point {
+  r: 8;
+  fill: #ffffff;
+}
+
+.anchor-point {
+  transition: all 0.15s ease;
+}
+
+.anchor-hitbox {
+  cursor: crosshair;
+}

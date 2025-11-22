@@ -1,0 +1,37 @@
+.connection {
+  cursor: pointer;
+}
+
+.connection-hitbox {
+  cursor: pointer;
+}
+
+.connection-path {
+  transition: stroke-width 0.15s ease;
+  pointer-events: none;
+}
+
+.connection:hover .connection-path {
+  stroke-width: 3;
+}
+
+.connection.selected .connection-path {
+  stroke-width: 3;
+  filter: drop-shadow(0 0 4px rgba(0, 122, 204, 0.6));
+}
+
+.connection-point {
+  cursor: move;
+}
+
+.point-handle {
+  transition: all 0.15s ease;
+}
+
+.connection-point:hover .point-handle {
+  r: 8;
+}
+
+.point-hitbox {
+  cursor: move;
+}
