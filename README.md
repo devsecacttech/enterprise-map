@@ -95,12 +95,12 @@ Panel de administración con canvas infinito e interactivo para crear diagramas,
 - **Animación elegante**: Fade-in desde la izquierda
 
 #### Iconos Profesionales
-- **Librería lucide-react**: Iconos SVG modernos y escalables
+- **Iconos SVG personalizados**: Sin dependencias externas
 - **Totalmente personalizables**: Tamaño, color y stroke configurables
-- **Alta calidad**: Diseño consistente y profesional
+- **Alta calidad**: Diseño limpio y profesional
 - **Iconos actuales**:
-  - 📐 **RectangleHorizontal**: Para crear rectángulos
-  - ⬜ **Square**: Para crear cuadrados
+  - 📐 **Rectángulo**: Icono horizontal para crear rectángulos
+  - ⬜ **Cuadrado**: Icono cuadrado para crear cuadrados
 
 #### Canvas Optimizado
 - **Altura completa**: El canvas ocupa todo el espacio vertical disponible

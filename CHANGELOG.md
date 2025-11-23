@@ -4,6 +4,14 @@ Todos los cambios notables de este proyecto serán documentados en este archivo.
 
 ## [1.2.0] - 2025-11-22
 
+### 🔄 Actualización Importante
+
+- **Iconos SVG Personalizados**: Reemplazado lucide-react con iconos SVG directos
+  - Elimina dependencia externa de lucide-react
+  - Iconos más ligeros y sin problemas de instalación
+  - Funciona inmediatamente sin `npm install` de paquetes adicionales
+  - Mismo diseño profesional pero integrado en el código
+
 ### ✨ Añadido
 
 - **Snap-to-Anchor Inteligente**: Sistema de ajuste automático de conexiones
